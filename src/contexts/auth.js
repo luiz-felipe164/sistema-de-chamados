@@ -23,6 +23,33 @@ function AuthProvider({ children }) {
         loadStorage()
     }, [])
 
+    async function signIn(email, password)
+    {
+        setLoadingAuth(true)
+
+        await firebase.auth().signInWithEmailAndPassword(email, password)
+        .then(async (value) => {
+            let uid = value.user.uid
+            
+            const dataProfile = await firebase.firestore().collection('users').doc(uid).get()
+
+            let data = {
+                uid: uid,
+                nome: dataProfile.data().nome,
+                avatarUrl: dataProfile.data().avatarUrl,
+                email: dataProfile.data().email
+            }
+
+            setUser(data);
+            storageUser(data);
+            setLoadingAuth(false)
+        })
+        .catch((error) => {
+            console.log(error)
+            setLoadingAuth(false)
+        })
+    }
+
     async function signUp(name, email, password) 
     {
         setLoadingAuth(true)
@@ -64,7 +91,8 @@ function AuthProvider({ children }) {
             signed: !!user, 
             user,
             loading,
-            signUp
+            signUp,
+            signIn
         }}>
             {children}
         </AuthContext.Provider>

@@ -1,16 +1,23 @@
 
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import { Link } from 'react-router-dom';
 import './signin.css';
 import logo from '../../assets/logo.png';
+import { AuthContext } from '../../contexts/auth';
 
 function SignIn() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
+  const { signIn } = useContext(AuthContext);
+
   function handleSubmit(e){
     e.preventDefault();
-    alert('CLICOU')
+    if (email !== '' && password !== '') {
+      signIn(email, password)
+    } else {
+      alert('Todos os campos são obrigatorios!')
+    }
   }
 
   return (
